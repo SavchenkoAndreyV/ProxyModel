@@ -18,7 +18,7 @@ TableModel::TableModel(QObject *parent) :QSortFilterProxyModel(parent)
 
 int TableModel::rowCount(const QModelIndex &) const
 {
-    return QSortFilterProxyModel::rowCount() + svalues.count();
+    return QSortFilterProxyModel::rowCount() + values.count();
 }
 
 int TableModel::columnCount(const QModelIndex &) const
@@ -45,7 +45,7 @@ QVariant TableModel::data( const QModelIndex &index, int role ) const
                    default:
                     {
                         value = QSortFilterProxyModel::data(index, role);
-                        if (!vir) value = this->svalues.at(index.row()-3).getValueByIndex(index.row());}
+                        if (!vir) value = this->values.at(index.row()-3).getValueByIndex(index.row());}
                         return value;
                     }
             break;
@@ -75,11 +75,11 @@ QVariant TableModel::data( const QModelIndex &index, int role ) const
     return value;
 }
 
-void TableModel::spopulate(QList<TableData> newValues)
+void TableModel::populate(QList<TableData> newValues)
 {
     this->beginResetModel();
     this->beginInsertRows(QModelIndex(), 0, 0);
-        this->svalues= newValues;
+        this->values= newValues;
     endInsertRows();
     endResetModel();
 }
@@ -100,7 +100,7 @@ bool TableModel::setData(const QModelIndex & index, const QVariant & value, int 
 
 void TableModel::markable()
 {
-    QList<TableData> values;
+    QList<TableData> svalues;
     float mval=0;
     for (auto const& v: checkbox.chk)
     {
@@ -110,20 +110,18 @@ void TableModel::markable()
     {
         mean.setValueByIndex(id, mval);
     }
-    if (svalues.size())
-        svalues.removeLast();
-    values.append(mean);
-    spopulate(values);
-    values.removeLast();
+    svalues.append(mean);
+    populate(svalues);
+    svalues.removeLast();
 }
 
 
 void TableModel::ReMove()
 {
-    if (svalues.size())
+    if (values.size())
     {
         this->beginResetModel();
-            this->svalues.clear();
+            this->values.clear();
         this->endResetModel();
     }
 }

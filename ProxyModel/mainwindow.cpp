@@ -3,6 +3,7 @@
 #include "mainwindow.h"
 #include "qdebug.h"
 #include "qfileinfo.h"
+#include "qsqlquery.h"
 #include "ui_mainwindow.h"
 #include "tablemodel.h"
 #include "Values.h"
@@ -20,12 +21,12 @@ MainWindow::MainWindow(QWidget *parent)
 {
     //Q_OBJECT
     QSqlQueryModel *qm = new QSqlQueryModel(this);
-    QString databaseName = "default_project";
-    QFileInfo databaseFileName(databaseName + ".pgdb");
+    QString databaseName = "default";
+    QFileInfo databaseFileName(databaseName + ".sqlite");
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", databaseName);
     db.setDatabaseName(databaseFileName.absoluteFilePath());
     db.open();
-    qm->setQuery("SELECT * FROM records", db);
+    qm->setQuery("SELECT * FROM example", db);
     p->tm.setSourceModel(qm);
     ui->setupUi(this);
     this->ui->tableView->setModel(&p->tm);
